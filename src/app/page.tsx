@@ -1,31 +1,25 @@
 "use client";
+import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
-interface Message {
-  sender: string;
-  content: string;
-}
+import { api } from "../../convex/_generated/api";
 
 export default function Home() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      sender: "Syscily",
-      content: "Hey Gwourl",
-    },
-    {
-      sender: "Kara",
-      content: "Let's HH",
-    },
-  ]);
+  const messages = useQuery(api.functions.message.list);
+  const createMessage = useMutation(api.functions.message.create);
 
   const [input, setInput] = useState("");
+
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setMessages([...messages, { sender: "Syscily", content: input }]);
+    createMessage({
+      sender: "Syscily",
+      content: input,
+    });
     setInput("");
   };
   return (
     <div>
-      {messages.map((message, index) => (
+      {messages?.map((message, index) => (
         <div key={index}>
           <strong> {message.sender}</strong> : {message.content}
         </div>
